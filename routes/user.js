@@ -10,6 +10,21 @@ var csrf = require('csurf');
 var csrfProtection = csrf();
 router.use(csrfProtection);
 
+router.get('/profile', isLoggedIn, function (req, res, next) {
+  res.render('user/profile');
+})
+
+router.get('/logout', isLoggedIn, function (req, res, next) {
+  req.logout();
+  res.redirect('/');
+})
+
+
+// Not Login
+router.use('/', notLoggedIn, function (req, res, next) {
+  next();
+})
+
 // Sign up
 router.get('/signup', function(req, res, next) {
   var errors = req.flash('error');
@@ -41,9 +56,16 @@ router.post('/signin', passport.authenticate('local.signin', {
 }));
 
 
-
-router.get('/profile', function (req, res, next) {
-  res.render('user/profile');
-})
-
 module.exports = router;
+
+function isLoggedIn(req, res, next) {
+  if(req.isAuthenticated())
+    return next();
+  res.redirect('/user/signin');
+}
+
+function notLoggedIn(req, res, next) {
+  if(!req.isAuthenticated())
+    return next();
+  res.redirect('/');
+}
