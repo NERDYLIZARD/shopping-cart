@@ -10,6 +10,7 @@ var csrf = require('csurf');
 var csrfProtection = csrf();
 router.use(csrfProtection);
 
+// Sign up
 router.get('/signup', function(req, res, next) {
   var errors = req.flash('error');
   res.render('user/signup', {
@@ -23,6 +24,23 @@ router.post('/signup', passport.authenticate('local.signup', {
   failureRedirect: '/user/signup',
   failureFlash: true,
 }));
+
+// Sign in
+router.get('/signin', function(req, res, next) {
+  var errors = req.flash('error');
+  res.render('user/signin', {
+    csrfToken: req.csrfToken(),
+    errors: errors,
+  });
+});
+
+router.post('/signin', passport.authenticate('local.signin', {
+  successRedirect: '/user/profile',
+  failureRedirect: '/user/signin',
+  failureFlash: true,
+}));
+
+
 
 router.get('/profile', function (req, res, next) {
   res.render('user/profile');
