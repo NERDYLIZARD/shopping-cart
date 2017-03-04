@@ -16,8 +16,9 @@
       <ul class="nav navbar-nav navbar-right">
 
         <li>
-          <a href="/shopping-cart">
-            <i class="fa fa-shopping-cart" aria-hidden="true"></i> Shopping Cart <span class="badge">{{session.cart.totalQty}}</span>
+          <a href="/cart">
+            <i class="fa fa-shopping-cart" aria-hidden="true"></i> Shopping Cart
+            {{#if session.cart.totalQty}}<span class="badge">{{session.cart.totalQty}}</span>{{/if}}
           </a>
         </li>
 
