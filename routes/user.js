@@ -27,10 +27,8 @@ router.use('/', notLoggedIn, function (req, res, next) {
 
 // Sign up
 router.get('/signup', function(req, res, next) {
-  var errors = req.flash('error');
   res.render('user/signup', {
     csrfToken: req.csrfToken(),
-    errors: errors,
   });
 });
 
@@ -42,10 +40,8 @@ router.post('/signup', passport.authenticate('local.signup', {
 
 // Sign in
 router.get('/signin', function(req, res, next) {
-  var errors = req.flash('error');
   res.render('user/signin', {
     csrfToken: req.csrfToken(),
-    errors: errors,
   });
 });
 
