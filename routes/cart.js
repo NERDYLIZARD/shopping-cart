@@ -42,6 +42,30 @@ router.get('/checkout', function (req, res, next) {
 })
 
 router.post('/checkout', function (req, res, next) {
+  if (!req.session.cart)
+    return res.redirect('/cart');
+
+  var cart = new Cart(req.session.cart);
+  var stripe = require("stripe")(
+    "sk_test_gnl471KUNlqnivfEfxKW5SNo"
+  );
+
+  stripe.charges.create({
+    amount: cart.totalPrice * 100,
+    currency: "usd",
+    source: req.body.stripeToken, // obtained with Stripe.js
+    description: "Test Charge"
+  }, function(err, charge) {
+    if(err) {
+      req.flash('error', err.message);
+      return res.redirect('/cart/checkout');
+    }
+
+    req.flash('success', "Succesfully placed orders");
+    req.session.cart = null;
+    res.redirect('/');
+
+  });
 
 });
 

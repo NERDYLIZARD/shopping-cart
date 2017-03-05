@@ -2,9 +2,18 @@
   <div class="col-sm-6 col-md-4 col-md-offset-4 col-sm-offset-3">
     <h1>Checkout</h1>
     <h4>Your Total: ${{total}}</h4>
-    <div id="charge-errors" class="alert alert-danger hidden">
-    </div>
-    <form action="/checkout" method="post" id="checkout-form">
+  <!--2 error types-->
+    <!--1. Validation errors e.g. invalid credit card format, invalid expired date-->
+    <div id="charge-errors" class="alert alert-danger hidden"></div>
+    <!--2. Authentication errors e.g, incorrect token, incorrect credit card number-->
+    {{#if errorMessages}}
+      <div class="alert alert-danger">
+        {{#each errorMessages}}
+          <p>{{this}}</p>
+        {{/each}}
+      </div>
+    {{/if}}
+    <form action="/cart/checkout" method="post" id="checkout-form">
       <div class="row">
         <div class="col-xs-12">
           <div class="form-group">

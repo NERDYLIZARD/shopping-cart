@@ -1,3 +1,10 @@
+{{#if successMessages}}
+  <div class="alert alert-success">
+    {{#each successMessages}}
+      <p>{{this}}</p>
+    {{/each}}
+  </div>
+{{/if}}
 <div class="row">
   {{#each products}}
   <div class="col-sm-6 col-md-4">
