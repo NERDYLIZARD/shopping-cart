@@ -32,7 +32,7 @@ router.get('/add-to-cart/:id', function (req, res, next) {
 
 });
 
-router.get('/checkout', function (req, res, next) {
+router.get('/checkout', isLoggedIn, function (req, res, next) {
   if (!req.session.cart)
     return res.redirect('/cart');
 
@@ -42,7 +42,7 @@ router.get('/checkout', function (req, res, next) {
   });
 })
 
-router.post('/checkout', function (req, res, next) {
+router.post('/checkout', isLoggedIn, function (req, res, next) {
   if (!req.session.cart)
     return res.redirect('/cart');
 
@@ -76,10 +76,15 @@ router.post('/checkout', function (req, res, next) {
       res.redirect('/');
     });
 
-
   });
-
 });
 
 
 module.exports = router;
+
+function isLoggedIn(req, res, next) {
+  if(req.isAuthenticated())
+    return next();
+  req.session.previousUrl = "/cart" + req.url;
+  res.redirect('/user/signin');
+}
