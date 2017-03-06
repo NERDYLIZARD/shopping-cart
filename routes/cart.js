@@ -20,7 +20,7 @@ router.get('/', function (req, res, next) {
 
 router.get('/add-to-cart/:id', function (req, res, next) {
   var productId = req.params.id;
-  var cart = new Cart(req.session.cart ? req.session.cart : {});
+  var cart = new Cart(req.session.cart);
 
   Product.findById(productId, function (err, product) {
     if(err) return res.redirect('/');
@@ -75,10 +75,28 @@ router.post('/checkout', isLoggedIn, function (req, res, next) {
       req.session.cart = null;
       res.redirect('/');
     });
-
   });
 });
 
+
+router.get('/reduce/:id', function (req, res, next) {
+  var productId = req.params.id;
+  var cart = new Cart(req.session.cart);
+
+  cart.reduceItem(productId);
+  req.session.cart = cart;
+  res.redirect('/shopping-cart');
+});
+
+
+router.get('/remove/:id', function (req, res, next) {
+  var productId = req.params.id;
+  var cart = new Cart(req.session.cart);
+
+  cart.removeItems(productId);
+  req.session.cart = cart;
+  res.redirect('/shopping-cart');
+});
 
 module.exports = router;
 
