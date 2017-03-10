@@ -18,6 +18,7 @@ require('./config/passport');
 
 var routes = require('./routes/index');
 var userRoutes = require('./routes/user');
+var productRoutes = require('./routes/product');
 var cartRoutes = require('./routes/cart');
 
 var app = express();
@@ -54,6 +55,7 @@ app.use(function (req, res, next) {
 });
 
 app.use('/cart', cartRoutes);
+app.use('/product', productRoutes);
 app.use('/user', userRoutes);
 app.use('/', routes);
 

@@ -20,15 +20,17 @@ router.get('/', function (req, res, next) {
 
 router.get('/add-to-cart/:id', function (req, res, next) {
   var productId = req.params.id;
-  var cart = new Cart(req.session.cart);
+  var cart = new Cart(req.session.cart ? req.session.cart : {});
 
-  Product.findById(productId, function (err, product) {
-    if(err) return res.redirect('/');
+  Product.findById(productId)
+    .select('-image')
+    .exec(function (err, product) {
+      if(err) return res.redirect('/');
 
-    cart.add(product);
-    req.session.cart = cart;
-    res.redirect('/');
-  });
+      cart.add(product);
+      req.session.cart = cart;
+      res.redirect('/');
+    });
 
 });
 
@@ -85,7 +87,7 @@ router.get('/reduce/:id', function (req, res, next) {
 
   cart.reduceItem(productId);
   req.session.cart = cart;
-  res.redirect('/shopping-cart');
+  res.redirect('/cart');
 });
 
 
@@ -95,7 +97,7 @@ router.get('/remove/:id', function (req, res, next) {
 
   cart.removeItems(productId);
   req.session.cart = cart;
-  res.redirect('/shopping-cart');
+  res.redirect('/cart');
 });
 
 module.exports = router;
