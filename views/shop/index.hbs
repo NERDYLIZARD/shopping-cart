@@ -17,8 +17,13 @@
         <p class="description">{{this.description}}</p>
         <div class="clearfix">
           <div class="price pull-left">${{this.price}}</div>
-          <a href="/cart/add-to-cart/{{this._id}}" class="btn btn-primary pull-right"
+          <div class="pull-right">
+            <a href="/cart/add-to-cart/{{this._id}}" class="btn btn-primary"
              role="button">Add to Cart</a>
+            <div class="config">
+              <a href="/product/form/{{this._id}}"><i class="fa fa-pencil-square-o fa-2x" aria-hidden="true"></i></a>
+            </div>
+          </div>
         </div>
       </div>
     </div>

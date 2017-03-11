@@ -1,23 +1,23 @@
 <div class="col-sm-6 col-md-4 col-md-offset-4 col-sm-offset-3">
   <h1>{{heading}}</h1>
-  <form action="/product/add" method="post">
+  <form action={{url}} method="POST">
     <div class="form-group">
       <label for="title">Title</label>
-      <input type="text" class="form-control" id="title" name="title">
+      <input type="text" class="form-control" id="title" name="title" value={{title}}>
     </div>
     <div class="form-group">
       <label for="description">Description</label>
-      <textarea class="form-control" rows="5" id="description" name="description"></textarea>
-      <!--<input type="text" class="form-control" id="description" name="description">-->
+      <textarea class="form-control" rows="5" id="description" name="description">{{description}}</textarea>
     </div>
     <div class="form-group">
       <label for="price">Price</label>
-      <input type="text" class="form-control" id="price" placeholder="$25" name="price">
+      <input type="text" class="form-control" id="price" placeholder="$25" name="price" value="{{price}}">
     </div>
     <div class="form-group">
       <label for="productImage">Product Image</label>
       <input type="file" id="productImage" name="productImage">
     </div>
+    <input type="hidden" name="_method" value="{{overridingMethod}}"/>
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>
 </div>
