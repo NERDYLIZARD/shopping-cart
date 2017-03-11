@@ -17,6 +17,7 @@
       <label for="productImage">Product Image</label>
       <input type="file" id="productImage" name="productImage">
     </div>
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
     <input type="hidden" name="_method" value="{{overridingMethod}}"/>
     <button type="submit" class="btn btn-primary">Submit</button>
   </form>

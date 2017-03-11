@@ -6,9 +6,11 @@ var express = require('express');
 var router = express.Router();
 var fs = require('fs');
 var passport = require('passport');
+var csrf = require('csurf')();
 
 var Product = require('../models/product');
 
+router.use(csrf);
 
 router.get('/:id/image', function (req, res, next) {
   Product.findById(req.params.id, function (err, product) {
@@ -28,7 +30,8 @@ router.get('/form', function (req, res, next) {
   res.render('product/product-form', {
     heading: "Add Product",
     url: "/product/add",
-    overridingMethod: "POST"
+    overridingMethod: "POST",
+    csrfToken: req.csrfToken(),
   });
 });
 
@@ -59,7 +62,10 @@ router.get('/form/:id', function (req, res, next) {
   var productId = req.params.id;
 
   Product.findById(productId, function (err, product) {
-
+    if (!product.seller.equals(req.user._id)) {
+      req.flash('error', "Unauthorized");
+      return res.redirect('/');
+    }
     res.render('product/product-form', {
       heading: "Edit Product",
       url: "/product/edit/" + productId,
@@ -67,6 +73,7 @@ router.get('/form/:id', function (req, res, next) {
       title: product.title,
       description: product.description,
       price: product.price,
+      csrfToken: req.csrfToken()
     });
   });
 });
@@ -76,6 +83,11 @@ router.post('/edit/:id', function (req, res, next) {
 
   var productId = req.params.id;
   Product.findById(productId, function (err, product) {
+    if (!product.seller.equals(req.user._id)) {
+      req.flash('error', "Unauthorized");
+      return res.redirect('/');
+    }
+
     product.title =  req.body.title;
     product.description = req.body.description;
     product.price = +req.body.price;
@@ -101,9 +113,16 @@ router.post('/edit/:id', function (req, res, next) {
 
 router.get('/delete/:id', function (req, res, next) {
   var productId = req.params.id;
-  Product.remove({_id: productId}, function (err, product) {
-    if (err) return res.write(err);
-    res.redirect('/');
+
+  Product.findById(productId, function (err, product) {
+    if (!product.seller.equals(req.user._id)) {
+      req.flash('error', "Unauthorized");
+      return res.redirect('/');
+    }
+    product.remove(function (err, product) {
+      if (err) return res.write(err);
+      res.redirect('/');
+    });
   });
 });
 

@@ -5,7 +5,17 @@
     {{/each}}
   </div>
 {{/if}}
-<a href="/product/form">Add Product</a>
+{{#if errorMessages}}
+  <div class="alert alert-danger">
+    {{#each errorMessages}}
+      <p>{{this}}</p>
+    {{/each}}
+  </div>
+{{/if}}
+{{#if login}}
+<a href="/product/form" class="btn btn-success">Add Product</a>
+<hr>
+{{/if}}
 <div class="row">
   {{#each products}}
   <div class="col-sm-6 col-md-4">
@@ -18,12 +28,15 @@
         <div class="clearfix">
           <div class="price pull-left">${{this.price}}</div>
           <div class="pull-right">
-            <a href="/cart/add-to-cart/{{this._id}}" class="btn btn-primary"
-             role="button">Add to Cart</a>
-            <div class="config">
-              <a href="/product/form/{{this._id}}"><i class="fa fa-pencil-square-o fa-2x" aria-hidden="true"></i></a>
-              <a href="/product/delete/{{this._id}}"><i class="fa fa-trash fa-2x" aria-hidden="true"></i></a>
-            </div>
+            {{#ifCond this.seller '!=' ../user._id}}
+              <a href="/cart/add-to-cart/{{this._id}}" class="btn btn-primary" role="button">Add to Cart</a>
+            {{/ifCond}}
+            {{#ifCond this.seller '==' ../user._id}}
+              <div class="config">
+                <a href="/product/form/{{this._id}}"><i class="fa fa-pencil-square-o fa-2x" aria-hidden="true"></i></a>
+                <a href="/product/delete/{{this._id}}"><i class="fa fa-trash fa-2x" aria-hidden="true"></i></a>
+              </div>
+            {{/ifCond}}
           </div>
         </div>
       </div>
