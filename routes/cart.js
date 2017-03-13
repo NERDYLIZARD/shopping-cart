@@ -29,7 +29,8 @@ router.get('/add-to-cart/:id', function (req, res, next) {
 
       cart.add(product);
       req.session.cart = cart;
-      res.redirect('/');
+      res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+      res.redirect('back');
     });
 
 });
@@ -87,7 +88,8 @@ router.get('/reduce/:id', function (req, res, next) {
 
   cart.reduceItem(productId);
   req.session.cart = cart;
-  res.redirect('/cart');
+  res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+  res.redirect('back');
 });
 
 
@@ -97,7 +99,8 @@ router.get('/remove/:id', function (req, res, next) {
 
   cart.removeItems(productId);
   req.session.cart = cart;
-  res.redirect('/cart');
+  res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+  res.redirect('back');
 });
 
 module.exports = router;
@@ -105,6 +108,6 @@ module.exports = router;
 function isLoggedIn(req, res, next) {
   if(req.isAuthenticated())
     return next();
-  req.session.previousUrl = "/cart" + req.url;
+  req.session.targetUrl = "/cart" + req.url;
   res.redirect('/user/signin');
 }

@@ -27,6 +27,7 @@ router.use('/', isLoggedIn, function (req, res, next) {
 
 // Add product
 router.get('/form', function (req, res, next) {
+  req.session.previousUrl = req.headers.referer;
   res.render('product/product-form', {
     heading: "Add Product",
     url: "/product/add",
@@ -49,9 +50,11 @@ router.post('/add', function (req, res, next) {
     product.price = +req.body.price;
     product.seller = req.user;
 
+    var previousUrl = req.session.previousUrl;
     product.save(function (err, product) {
       if(err) throw err;
-      res.redirect('/');
+      req.session.previousUrl = null;
+      res.redirect(previousUrl);
     });
 
   });
@@ -66,6 +69,7 @@ router.get('/form/:id', function (req, res, next) {
       req.flash('error', "Unauthorized");
       return res.redirect('/');
     }
+    req.session.previousUrl = req.headers.referer;
     res.render('product/product-form', {
       heading: "Edit Product",
       url: "/product/edit/" + productId,
@@ -92,10 +96,12 @@ router.post('/edit/:id', function (req, res, next) {
     product.description = req.body.description;
     product.price = +req.body.price;
 
+    var previousUrl = req.session.previousUrl;
     if (!req.body.productImage) {
       product.save(function (err, product) {
         if (err) throw err;
-        res.redirect('/');
+        res.redirect(previousUrl);
+
       });
     } else {
       fs.readFile(req.body.productImage, function (err, data) {
@@ -104,10 +110,11 @@ router.post('/edit/:id', function (req, res, next) {
 
         product.save(function (err, product) {
           if (err) throw err;
-          res.redirect('/');
+          res.redirect(previousUrl);
         });
       });
     }
+    req.session.previousUrl = null;
   });
 });
 
@@ -117,11 +124,15 @@ router.get('/delete/:id', function (req, res, next) {
   Product.findById(productId, function (err, product) {
     if (!product.seller.equals(req.user._id)) {
       req.flash('error', "Unauthorized");
-      return res.redirect('/');
+      res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+      return res.redirect('back');
+
     }
     product.remove(function (err, product) {
       if (err) return res.write(err);
-      res.redirect('/');
+      // clear cache to prevent res return 304 i.e same content
+      res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+      res.redirect('back');
     });
   });
 });

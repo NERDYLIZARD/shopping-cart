@@ -5,9 +5,11 @@ var express = require('express');
 var router = express.Router();
 var csrf = require('csurf');
 var passport = require('passport');
+var async = require('async');
 
 var User = require('../models/user');
 var Order = require('../models/order');
+var Product = require('../models/product');
 var Cart = require('../models/cart');
 
 var csrfProtection = csrf();
@@ -15,17 +17,40 @@ router.use(csrfProtection);
 
 router.get('/profile', isLoggedIn, function (req, res, next) {
 
-  Order.find({user: req.user}, function (err, orders) {
-    if (err)
-      return res.write('Error!');
+  var locals = {};
+  var tasks = [
+    function (cb) {
+      Order.find({user: req.user}, function (err, orders) {
+        if (err)
+          return res.write('Error!');
 
-    var cart;
-    orders.forEach(function (order) {
-      cart = new Cart(order.cart);
-      order.items = cart.getItems();
+        var cart;
+        orders.forEach(function (order) {
+          cart = new Cart(order.cart);
+          order.items = cart.getItems();
+        });
+        locals.orders = orders;
+        cb();
+      });
+    },
+
+    function (cb) {
+      Product.find({seller: req.user}, function (err, products) {
+        if (err) return res.write('Error!');
+        locals.products = products;
+        cb();
+      });
+    }
+  ];
+
+  async.parallel(tasks, function(err) {
+    res.render('user/profile', {
+      orders: locals.orders,
+      products: locals.products
     });
-    res.render('user/profile', {orders: orders});
   });
+
+
 });
 
 router.get('/logout', isLoggedIn, function (req, res, next) {
@@ -51,10 +76,10 @@ router.post('/signup', passport.authenticate('local.signup', {
   failureFlash: true,
 }), function (req, res, next) {
 
-  var previousUrl = req.session.previousUrl;
-  if(previousUrl) {
-    req.session.previousUrl = null;
-    res.redirect(previousUrl);
+  var targetUrl = req.session.targetUrl;
+  if(targetUrl) {
+    req.session.targetUrl = null;
+    res.redirect(targetUrl);
   } else
     res.redirect('/user/profile');
 
@@ -73,10 +98,10 @@ router.post('/signin', passport.authenticate('local.signin', {
   failureFlash: true,
 }), function (req, res, next) {
 
-  var previousUrl = req.session.previousUrl;
-  if(previousUrl) {
-    req.session.previousUrl = null;
-    res.redirect(previousUrl);
+  var targetUrl = req.session.targetUrl;
+  if(targetUrl) {
+    req.session.targetUrl = null;
+    res.redirect(targetUrl);
   } else
     res.redirect('/user/profile');
 
