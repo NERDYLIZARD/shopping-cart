@@ -57,12 +57,13 @@
   </div>
 
   <script type="text/javascript">
+  $(function() {
     function render(pageId) {
       $(".profile-page").hide();
       $(".nav-item").removeClass('active');
 
       $(pageId).show();
-      $(pageId+'-nav').addClass('active');
+      $(pageId + '-nav').addClass('active');
     }
 
     $(window).on("hashchange", function (event) {
@@ -71,5 +72,5 @@
 
     location.hash = "";
     location.hash = "#products";
-
+  });
   </script>
