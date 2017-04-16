@@ -41,7 +41,8 @@ router.post('/add', function (req, res, next) {
 
   var product = new Product();
 
-  fs.readFile(req.body.productImage, function (err, data) {
+  var path = "C:/Users/Hoppies/Desktop/";
+  fs.readFile(path + req.body.productImage, function (err, data) {
     product.image.data = data;
     // get extension
     product.image.contentType = req.body.productImage.split('.').pop();
@@ -70,6 +71,7 @@ router.get('/form/:id', function (req, res, next) {
       return res.redirect('/');
     }
     req.session.previousUrl = req.headers.referer;
+    console.log(product.title);
     res.render('product/product-form', {
       heading: "Edit Product",
       url: "/product/edit/" + productId,
@@ -104,7 +106,9 @@ router.post('/edit/:id', function (req, res, next) {
 
       });
     } else {
-      fs.readFile(req.body.productImage, function (err, data) {
+      var path = "C:/Users/Hoppies/Desktop/";
+      fs.readFile(path + req.body.productImage, function (err, data) {
+        console.log(data);
         product.image.data = data;
         product.image.contentType = req.body.productImage.split('.').pop();
 

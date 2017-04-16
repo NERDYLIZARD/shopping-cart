@@ -47,7 +47,7 @@ passport.use('local.signup', new LocalStrategy({
       newUser.save(function (err, result) {
         if(err)
           return done(err);
-        return done(null, newUser);
+        done(null, newUser);
       })
     })
   })
@@ -81,7 +81,7 @@ passport.use('local.signin', new LocalStrategy({
       if(!user.validatePassword(password))
         return done(null, false, req.flash('error', 'Incorrect email or password'));
 
-      return done(null, user);
+      done(null, user);
 
     })
   })

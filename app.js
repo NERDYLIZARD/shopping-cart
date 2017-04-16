@@ -36,6 +36,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(methodOverride('_method'));
 app.use(validator());
 app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+
 app.use(session({
   secret: 'supersecret',
   resave: false,
@@ -46,7 +48,6 @@ app.use(session({
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(function (req, res, next) {
   res.locals.login = req.isAuthenticated();
@@ -64,7 +65,7 @@ app.use('/', routes);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
-  return res.render('index');
+  return res.render('shop/index');
 });
 
 
