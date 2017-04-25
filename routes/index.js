@@ -11,38 +11,19 @@ router.get('/', function(req, res, next) {
     .exec(function (err, products) {
       res.render('shop/index', {
         products: products,
+        helpers: {
+          ifCond: function (v1, operator, v2, options) {
+            switch (operator) {
+              case '==':
+                return (v1.equals(v2)) ? options.fn(this) : options.inverse(this);
+              case '!=':
+                return (!v1.equals(v2)) ? options.fn(this) : options.inverse(this);
+            }
+          }
+        }
       });
-    })
-
+    });
 });
-
-
-router.get('/add-to-cart/:id', function (req, res, next) {
-  var productId = req.params.id;
-  var cart = new Cart(req.session.cart ? req.session.cart : {});
-
-  Product.findById(productId, function (err, product) {
-    if(err) return res.redirect('/');
-
-    cart.add(product);
-    req.session.cart = cart;
-    res.redirect('/');
-  });
-
-});
-
-router.get('/shopping-cart', function (req, res, next) {
-  if (!req.session.cart)
-    return res.render('shop/shopping-cart', {items: null});
-
-  var cart = new Cart(req.session.cart);
-  res.render('shop/shopping-cart', {
-    items: cart.getItems(),
-    totalPrice: cart.totalPrice
-  });
-
-})
-
 
 
 module.exports = router;

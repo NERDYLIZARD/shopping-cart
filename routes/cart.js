@@ -20,15 +20,18 @@ router.get('/', function (req, res, next) {
 
 router.get('/add-to-cart/:id', function (req, res, next) {
   var productId = req.params.id;
-  var cart = new Cart(req.session.cart);
+  var cart = new Cart(req.session.cart ? req.session.cart : {});
 
-  Product.findById(productId, function (err, product) {
-    if(err) return res.redirect('/');
+  Product.findById(productId)
+    .select('-image')
+    .exec(function (err, product) {
+      if(err) return res.redirect('/');
 
-    cart.add(product);
-    req.session.cart = cart;
-    res.redirect('/');
-  });
+      cart.add(product);
+      req.session.cart = cart;
+      res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+      res.redirect('back');
+    });
 
 });
 
@@ -85,7 +88,8 @@ router.get('/reduce/:id', function (req, res, next) {
 
   cart.reduceItem(productId);
   req.session.cart = cart;
-  res.redirect('/shopping-cart');
+  res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+  res.redirect('back');
 });
 
 
@@ -95,7 +99,8 @@ router.get('/remove/:id', function (req, res, next) {
 
   cart.removeItems(productId);
   req.session.cart = cart;
-  res.redirect('/shopping-cart');
+  res.header('Cache-Control', 'no-cache, private, no-store, must-revalidate, max-stale=0, post-check=0, pre-check=0');
+  res.redirect('back');
 });
 
 module.exports = router;
@@ -103,6 +108,6 @@ module.exports = router;
 function isLoggedIn(req, res, next) {
   if(req.isAuthenticated())
     return next();
-  req.session.previousUrl = "/cart" + req.url;
+  req.session.targetUrl = "/cart" + req.url;
   res.redirect('/user/signin');
 }
