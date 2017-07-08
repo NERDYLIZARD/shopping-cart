@@ -13,7 +13,7 @@ var flash = require('connect-flash');
 var validator = require('express-validator');
 var methodOverride = require('method-override');
 
-mongoose.connect("localhost:27017/shopping");
+mongoose.connect(process.env.MONGODB_URI || "localhost:27017/shopping");
 
 require('./config/passport');
 
@@ -39,7 +39,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(session({
-  secret: 'supersecret',
+  secret: process.env.SESSION_SECRET || 'supersecret',
   resave: false,
   saveUninitialized: false,
   store: new MongoStore({mongooseConnection: mongoose.connection}),
