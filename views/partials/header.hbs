@@ -14,34 +14,22 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav navbar-right">
-
         <li>
           <a href="/cart">
             <i class="fa fa-shopping-cart" aria-hidden="true"></i> Shopping Cart
             {{#if session.cart.totalQty}}<span class="badge">{{session.cart.totalQty}}</span>{{/if}}
           </a>
         </li>
-
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
           {{#if login}}
-          <i class="fa fa-user" aria-hidden="true"></i> {{user.email}}<span class="caret"></span>
+            <li><a href="/user/profile"><i class="fa fa-user" aria-hidden="true"></i>{{user.email}}</a></li>
+            <li><a href="/user/logout">Logout</a></li>
           {{else}}
-          <i class="fa fa-user" aria-hidden="true"></i> Signin / Signup<span class="caret"></span>
+            <li><a href="/user/signin">Sign In</a></li>
+            <li><a href="/user/signup"><u>Sign Up</u></a></li>
           {{/if}}
-          </a>
-          <ul class="dropdown-menu">
-            {{#if login}}
-              <li><a href="/user/profile">Profile</a></li>
-              <li role="separator" class="divider"></li>
-              <li><a href="/user/logout">Logout</a></li>
-            {{else}}
-              <li><a href="/user/signin">Sign In</a></li>
-              <li><a href="/user/signup">Sign Up</a></li>
-            {{/if}}
-          </ul>
         </li>
-
       </ul>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
